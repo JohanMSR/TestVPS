@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create minecraft user and directories
-RUN useradd -m -s /bin/bash minecraft && \
+RUN useradd -m -u 1000 -s /bin/bash minecraft && \
     mkdir -p /minecraft /app/server-files && \
     chown -R minecraft:minecraft /minecraft /app
 
@@ -36,7 +36,8 @@ RUN chmod +x /app/start-server.sh /app/enable-all-ops.sh
 
 WORKDIR /minecraft
 
-USER minecraft
+# Keep running as root for permission fixes
+USER root
 
 EXPOSE 25565
 

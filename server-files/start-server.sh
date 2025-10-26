@@ -2,10 +2,18 @@
 
 echo "Starting Minecraft Forge Server..."
 
+# Fix permissions on /minecraft directory
+if [ -d "/minecraft" ]; then
+    echo "Fixing permissions on /minecraft..."
+    chown -R minecraft:minecraft /minecraft || true
+    chmod -R 755 /minecraft || true
+fi
+
 # Copy server configuration files to /minecraft if they don't exist
 if [ ! -f "/minecraft/eula.txt" ]; then
     echo "Copying initial server configuration files..."
     cp -r /app/server-files/* /minecraft/
+    chown -R minecraft:minecraft /minecraft
 fi
 
 # Enable all players as operators
@@ -92,13 +100,15 @@ white-list=false
 EOF
 fi
 
-# Find the forge jar file
+# Fix ownership before starting
+chown -R minecraft:minecraft /minecraft
+
+# Start server as minecraft user
+cd /minecraft
 if [ -f "run.sh" ]; then
-    exec ./run.sh
+    exec su minecraft -c "./run.sh"
 elif [ -f "forge-1.21.1-47.4.0-universal.jar" ]; then
-    exec java ${JAVA_OPTS} -jar forge-1.21.1-47.4.0-universal.jar nogui
-elif [ -f "forge-*.jar" ]; then
-    exec java ${JAVA_OPTS} -jar forge-*.jar nogui
+    exec su minecraft -c "java ${JAVA_OPTS} -jar forge-1.21.1-47.4.0-universal.jar nogui"
 else
     echo "ERROR: Could not find Forge server jar file!"
     exit 1
