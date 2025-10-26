@@ -20,17 +20,16 @@ RUN useradd -m -s /bin/bash minecraft && \
 
 WORKDIR /minecraft
 
+# Copy server files first
+COPY --chown=minecraft:minecraft ./server-files/ /minecraft/
+
 # Download and install Forge
 RUN wget -O forge-installer.jar https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.21.1-47.4.0/forge-1.21.1-47.4.0-installer.jar && \
     java -jar forge-installer.jar --installServer --acceptLicense || true && \
     rm -f forge-installer.jar installer.jar.log
 
-# Copy server properties and configs
-COPY --chown=minecraft:minecraft ./server-files/* /minecraft/
-
-# Set permissions
-RUN chmod +x /minecraft/start-server.sh && \
-    chmod +x /minecraft/enable-all-ops.sh
+# Set permissions on scripts
+RUN chmod +x /minecraft/start-server.sh /minecraft/enable-all-ops.sh
 
 USER minecraft
 
