@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  minecraft-forge:
+    build: .
+    container_name: minecraft-forge-server
+    ports:
+      - "25565:25565"
+    volumes:
+      - minecraft_data:/minecraft/server
+      - ./server-files:/minecraft/server
+    environment:
+      - EULA=true
+      - SERVER_PORT=25565
+      - MINECRAFT_VERSION=1.20.1
+      - FORGE_VERSION=47.4.0
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      - minecraft-network
+
+volumes:
+  minecraft_data:
+    driver: local
+
+networks:
+  minecraft-network:
+    driver: bridge
