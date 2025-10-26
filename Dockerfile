@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create minecraft user and directories
-RUN useradd -m -u 1000 -s /bin/bash minecraft && \
+RUN useradd -m -s /bin/bash minecraft && \
     mkdir -p /minecraft /app/server-files && \
     chown -R minecraft:minecraft /minecraft /app
 
