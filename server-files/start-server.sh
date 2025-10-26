@@ -2,11 +2,10 @@
 
 echo "Starting Minecraft Forge Server..."
 
-# Copy server files from read-only mount if they don't exist
-if [ -d "/minecraft-server-files" ] && [ ! -f "/minecraft/start-server.sh" ]; then
-    echo "Copying server configuration files..."
-    cp -r /minecraft-server-files/* /minecraft/
-    chmod +x /minecraft/*.sh
+# Copy server configuration files to /minecraft if they don't exist
+if [ ! -f "/minecraft/eula.txt" ]; then
+    echo "Copying initial server configuration files..."
+    cp -r /app/server-files/* /minecraft/
 fi
 
 # Enable all players as operators
