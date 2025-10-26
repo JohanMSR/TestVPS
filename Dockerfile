@@ -23,7 +23,7 @@ COPY --chown=minecraft:minecraft ./server-files/ /app/server-files/
 
 # Download and install Forge in /app
 WORKDIR /app
-RUN wget -O forge-installer.jar https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.21.1-47.4.0/forge-1.21.1-47.4.0-installer.jar && \
+RUN wget -O forge-installer.jar https://maven.minecraftforge.net/net/minecraftforge/forge/1.21.1-47.4.0/forge-1.21.1-47.4.0-installer.jar && \
     java -jar forge-installer.jar --installServer --acceptLicense || true && \
     rm -f forge-installer.jar installer.jar.log
 

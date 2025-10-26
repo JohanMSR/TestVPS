@@ -28,7 +28,7 @@ export JAVA_OPTS="-Xmx${MAX_MEMORY:-4G} -Xms${MIN_MEMORY:-2G} -XX:+UseG1GC -XX:+
 # Check if Forge server files exist
 if [ ! -f "run.sh" ] && [ ! -f "server.jar" ] && [ ! -f "forge-*.jar" ]; then
     echo "First time setup detected. Installing Forge..."
-    wget -O forge-installer.jar https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.21.1-47.4.0/forge-1.21.1-47.4.0-installer.jar
+    wget -O forge-installer.jar https://maven.minecraftforge.net/net/minecraftforge/forge/1.21.1-47.4.0/forge-1.21.1-47.4.0-installer.jar
     java -jar forge-installer.jar --installServer --acceptLicense
     
     # Run the install script if it exists
