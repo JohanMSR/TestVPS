@@ -1,47 +1,40 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:21-jre
 
-# Set working directory
-WORKDIR /minecraft
+LABEL maintainer="Minecraft Server"
 
-# Install necessary packages
+ENV VERSION=47.4.0
+ENV FORGE_URL=https://files.minecraftforge.net/maven/net/minecraftforge/forge/${MINECRAFT_VERSION}-${VERSION}/forge-${MINECRAFT_VERSION}-${VERSION}-installer.jar
+ENV MINECRAFT_VERSION=1.21.1
+
+# Install required packages
 RUN apt-get update && apt-get install -y \
-    wget \
     curl \
+    wget \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Create minecraft user
-RUN useradd -m -s /bin/bash minecraft
+# Create minecraft user and directory
+RUN useradd -m -s /bin/bash minecraft && \
+    mkdir -p /minecraft && \
+    chown -R minecraft:minecraft /minecraft
 
-# Set environment variables
-ENV MINECRAFT_VERSION=1.20.1
-ENV FORGE_VERSION=47.4.0
-ENV SERVER_PORT=25565
-ENV EULA=true
+WORKDIR /minecraft
 
-# Create server directory
-RUN mkdir -p /minecraft/server
-WORKDIR /minecraft/server
+# Download and install Forge
+RUN wget -O forge-installer.jar https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.21.1-47.4.0/forge-1.21.1-47.4.0-installer.jar && \
+    java -jar forge-installer.jar --installServer --acceptLicense || true && \
+    rm -f forge-installer.jar installer.jar.log
 
-# Download and install Forge server
-RUN wget -O forge-installer.jar "https://maven.minecraftforge.net/net/minecraftforge/forge/${MINECRAFT_VERSION}-${FORGE_VERSION}/forge-${MINECRAFT_VERSION}-${FORGE_VERSION}-installer.jar" && \
-    java -jar forge-installer.jar --installServer && \
-    rm forge-installer.jar
+# Copy server properties and configs
+COPY --chown=minecraft:minecraft ./server-files/* /minecraft/
 
-# Copy server files
-COPY server-files/ ./
+# Set permissions
+RUN chmod +x /minecraft/start-server.sh && \
+    chmod +x /minecraft/enable-all-ops.sh
 
-# Set ownership
-RUN chown -R minecraft:minecraft /minecraft
-
-# Switch to minecraft user
 USER minecraft
 
-# Expose port
 EXPOSE 25565
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:25565 || exit 1
-
-# Start server
-CMD ["java", "-Xmx2G", "-Xms1G", "-jar", "forge-1.20.1-47.4.0.jar", "nogui"]
+# Start the server
+CMD ["/bin/bash", "/minecraft/start-server.sh"]

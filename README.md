@@ -1,217 +1,183 @@
-# Minecraft Forge Server 47.4.0
+# Minecraft Forge Server (1.21.1 - Forge 47.4.0)
 
-A complete Minecraft Forge server setup with Docker, Git support, and automatic OP permissions for all players.
+Docker setup for running a Minecraft Forge server on a VPS.
 
 ## Features
 
-- **Minecraft Forge 47.4.0** (Minecraft 1.20.1)
-- **Docker containerization** for easy deployment
-- **Git version control** with proper .gitignore
-- **Automatic OP permissions** for all players
-- **Easy backup and restore** functionality
-- **Health monitoring** and logging
+- ✅ Minecraft 1.21.1 with Forge 47.4.0
+- ✅ Automatic Forge download and installation
+- ✅ All players have operator privileges by default
+- ✅ Persistent data storage
+- ✅ Easy mod installation
+- ✅ Auto-restart on crash
+
+## Prerequisites
+
+- Docker
+- Docker Compose
+- 4GB+ RAM recommended
+- VPS or dedicated server
 
 ## Quick Start
 
-### Prerequisites
+1. **Clone or download this repository**
 
-- Docker and Docker Compose
-- Git
-- Java 17+ (for local development)
-
-### Installation
-
-1. **Clone the repository:**
-```bash
-git clone <your-repo-url>
-cd minecraft-forge-server
-```
-
-2. **Start the server:**
+2. **Build and start the server:**
 ```bash
 docker-compose up -d
 ```
 
-3. **Check server status:**
+3. **View logs:**
 ```bash
 docker-compose logs -f
 ```
 
-### Server Management
-
-#### Start Server
-```bash
-npm start
-# or
-docker-compose up -d
-```
-
-#### Stop Server
-```bash
-npm stop
-# or
-docker-compose down
-```
-
-#### View Logs
-```bash
-npm run logs
-# or
-docker-compose logs -f
-```
-
-#### Backup Server
-```bash
-npm run backup
-```
-
-#### Restore Server
-```bash
-npm run restore
-```
+4. **Connect to your server:**
+- Server IP: Your VPS IP
+- Port: 25565 (default)
 
 ## Configuration
 
 ### Server Properties
 
-The server is configured in `server-files/server.properties` with the following key settings:
-
-- **Port:** 25565 (default Minecraft port)
-- **Max Players:** 20
-- **Gamemode:** Survival
-- **PvP:** Enabled
-- **Command Blocks:** Enabled
-- **OP Permission Level:** 4 (highest)
-
-### OP Permissions
-
-All players automatically receive OP permissions (Level 4) when they join the server. This is configured through:
-
-- `server-files/ops.json` - OP player list
-- `server-files/forge-config/forge-server.toml` - Forge-specific settings
-- `server-files/auto-op-mod.js` - Auto-OP script
-
-### Docker Configuration
-
-The server runs in a Docker container with:
-
-- **Base Image:** OpenJDK 17
-- **Memory:** 2GB max, 1GB initial
-- **Port:** 25565 exposed
-- **Volumes:** Persistent data storage
-- **Health Check:** Built-in monitoring
-
-## File Structure
-
-```
-minecraft-forge-server/
-├── Dockerfile                 # Docker configuration
-├── docker-compose.yml         # Docker Compose setup
-├── package.json              # NPM scripts and dependencies
-├── .gitignore               # Git ignore rules
-├── README.md                # This file
-└── server-files/            # Server configuration
-    ├── server.properties    # Minecraft server settings
-    ├── eula.txt            # EULA agreement
-    ├── ops.json            # OP players list
-    ├── whitelist.json      # Whitelist (empty by default)
-    ├── start.sh            # Server startup script
-    ├── auto-op-mod.js      # Auto-OP functionality
-    └── forge-config/       # Forge-specific configuration
-        └── forge-server.toml
-```
-
-## Advanced Configuration
+Edit `server-data/server.properties` after first run to customize:
+- Max players
+- Difficulty
+- Game mode
+- PvP settings
+- etc.
 
 ### Memory Settings
 
-To adjust server memory, edit the `Dockerfile`:
-
-```dockerfile
-CMD ["java", "-Xmx4G", "-Xms2G", "-jar", "forge-1.20.1-47.4.0.jar", "nogui"]
+Edit `docker-compose.yml` to adjust memory:
+```yaml
+environment:
+  - MAX_MEMORY=4G  # Maximum RAM
+  - MIN_MEMORY=2G  # Minimum RAM
 ```
 
-### Port Configuration
+### Server Port
 
-To change the server port, update:
+Change the port in `docker-compose.yml`:
+```yaml
+ports:
+  - "25565:25565"  # Change left side for different host port
+```
 
-1. `docker-compose.yml` - port mapping
-2. `server-files/server.properties` - server-port
-3. `server-files/forge-config/forge-server.toml` - server-port
+## Directory Structure
 
-### OP Permission Levels
+```
+.
+├── docker-compose.yml       # Docker Compose configuration
+├── Dockerfile              # Docker image definition
+├── server-files/           # Initial server configuration
+│   ├── start-server.sh     # Server startup script
+│   ├── ops.json           # Operators list
+│   └── config/            # Forge config
+├── server-data/           # Server runtime data (created on first run)
+│   ├── world/            # World files
+│   ├── mods/             # Mod files
+│   ├── config/           # Mod configurations
+│   └── logs/             # Server logs
+└── README.md
+```
 
-- **Level 0:** No permissions
-- **Level 1:** Can bypass spawn protection
-- **Level 2:** Can use cheats and command blocks
-- **Level 3:** Can use most commands
-- **Level 4:** Full OP permissions (default for all players)
+## Adding Mods
+
+1. Stop the server:
+```bash
+docker-compose down
+```
+
+2. Place mod files in `./server-data/mods/` directory
+
+3. Start the server:
+```bash
+docker-compose up -d
+```
+
+## Managing the Server
+
+### View Logs
+```bash
+docker-compose logs -f minecraft-server
+```
+
+### Execute Console Commands
+```bash
+docker-compose exec minecraft-server rcon-cli <command>
+```
+
+### Stop Server
+```bash
+docker-compose down
+```
+
+### Start Server
+```bash
+docker-compose up -d
+```
+
+### Restart Server
+```bash
+docker-compose restart
+```
+
+### Access Server Console
+```bash
+docker-compose exec minecraft-server bash
+```
+
+## Operator Configuration
+
+By default, all players joining the server will have operator privileges. This is configured through the Forge permission system.
+
+To disable this and use traditional whitelist/ops.json:
+- Edit `config/defaultpermissions.json`
+- Or configure through the Forge permission system in-game
 
 ## Troubleshooting
 
-### Server Won't Start
-
-1. Check Docker is running: `docker --version`
-2. Check logs: `docker-compose logs`
-3. Verify Java version in container
-4. Check port availability: `netstat -an | grep 25565`
-
-### Players Can't Connect
-
-1. Verify server is running: `docker-compose ps`
-2. Check firewall settings
-3. Verify port forwarding (if needed)
-4. Check server logs for errors
-
-### Performance Issues
-
-1. Increase memory allocation in `Dockerfile`
-2. Optimize server properties
-3. Monitor resource usage: `docker stats`
-
-## Backup and Restore
-
-### Automatic Backup
-
+### Server won't start
 ```bash
-npm run backup
+# Check logs
+docker-compose logs -f
+
+# Check disk space
+df -h
 ```
 
-This creates a timestamped backup in the `backups/` directory.
+### Can't connect to server
+- Check firewall settings on your VPS
+- Verify port 25565 is open
+- Check server.properties for correct IP
 
-### Manual Backup
+### Out of memory
+- Increase MAX_MEMORY in docker-compose.yml
+- Allocate more RAM to Docker
 
+### Forge installation issues
 ```bash
-docker run --rm -v minecraft-forge_minecraft_data:/data -v $(pwd)/backups:/backup alpine tar czf /backup/manual-backup.tar.gz -C /data .
+# Rebuild the container
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
 ```
 
-### Restore from Backup
+## Security Notes
 
-```bash
-docker run --rm -v minecraft-forge_minecraft_data:/data -v $(pwd)/backups:/backup alpine tar xzf /backup/backup-file.tar.gz -C /data
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+⚠️ **Important:** The default configuration grants all players operator access. For production use:
+- Set `defaultPlayerPermissionLevel: 0` in `config/defaultpermissions.json`
+- Use whitelist by setting `white-list=true` in server.properties
+- Manage operators through ops.json or in-game commands
 
 ## License
 
-MIT License - see LICENSE file for details.
+This setup is provided as-is for running a Minecraft server.
 
 ## Support
 
-For issues and questions:
-
-1. Check the troubleshooting section
-2. Review Docker and Minecraft logs
-3. Create an issue in the repository
-4. Check Minecraft Forge documentation
-
----
-
-**Note:** This server setup automatically grants OP permissions to all players. Adjust the configuration if you need different permission levels.
+For issues related to:
+- **Minecraft/Forge**: Visit [Minecraft Forge Forums](https://forums.minecraftforge.net/)
+- **Docker**: Visit [Docker Documentation](https://docs.docker.com/)
+- **This setup**: Check the logs and configuration files 

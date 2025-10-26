@@ -1,38 +1,27 @@
-# Minecraft server files
-server-files/
+# Server data
+server-data/
 world/
 logs/
 crash-reports/
 *.log
+*.logs
 
-# Docker
-.docker/
-
-# IDE
-.vscode/
-.idea/
-*.iml
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Java
-*.class
+# Server files
 *.jar
 !forge-*.jar
 
-# Temporary files
-*.tmp
-*.temp
+# Environment files
+.env
+.env.local
 
-# Server properties (contains sensitive data)
-server.properties
+# OS files
+.DS_Store
+Thumbs.db
 
-# Whitelist and ops (contains player data)
-whitelist.json
-ops.json
-banned-players.json
-banned-ips.json
-usercache.json
-usernamecache.json
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Docker
+*.env.local

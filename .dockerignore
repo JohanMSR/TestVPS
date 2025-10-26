@@ -1,0 +1,7 @@
+server-data/
+world/
+logs/
+.git/
+.gitignore
+*.md
+README.md

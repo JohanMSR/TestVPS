@@ -1,0 +1,20 @@
+[forge]
+    # Whether the Forge debug log will use JSON formatting
+    jsonLogs = false
+    # Overrides the default Forge path for the mods directory on a dedicated server
+    mods = ""
+    # Overrides the default Forge path for the config directory on a dedicated server
+    config = ""
+
+[forge.server]
+    # Requires players to have a modified client to play on the server
+    requireClientVersions = false
+    # Disable the ability for Forge to update the world format
+    # WARNING: May cause the mod to not work at all
+    disableWorldFormatUpdate = false
+
+[forge.mods.coreprotect]
+    # If enabled, server operators will have the '#coreprotect' command permission by default
+    operatorPermission = true
+    # If enabled, server operators will be allowed to use the entire CoreProtect command syntax
+    fullOperatorAccess = true
